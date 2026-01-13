@@ -1,0 +1,9 @@
+{
+  "short_name": "Ski Wax",
+  "name": "Ski Wax App",
+  "icons": [],
+  "start_url": ".",
+  "display": "standalone",
+  "theme_color": "#475569",
+  "background_color": "#ffffff"
+}
