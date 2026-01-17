@@ -1,9 +1,6 @@
 import React, { useState, useEffect } from 'react';
 
-export default function App() {
-  const [location, setLocation] = useState({ lat: 59.91, lon: 10.75, name: 'Oslo' });
-  const [weather, setWeather] = useState(null);
-  const [loading, setLoading] = useState(true);
+
   const [customLocation, setCustomLocation] = useState('');
   const [showAddLocation, setShowAddLocation] = useState(false);
   const [currentPage, setCurrentPage] = useState('home');
@@ -31,10 +28,7 @@ export default function App() {
 
   const [filteredLocations, setFilteredLocations] = useState([]);
 
-  useEffect(() => {
-    fetchWeather(location.lat, location.lon);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+
 
   useEffect(() => {
     if (currentPage === 'trails' && location) {
@@ -55,30 +49,7 @@ export default function App() {
     }
   };
 
-  const fetchWeather = async (lat, lon) => {
-    try {
-      const response = await fetch(
-        `https://api.met.no/weatherapi/locationforecast/2.0/compact?lat=${lat}&lon=${lon}`,
-        {
-          headers: {
-            'User-Agent': 'SkiWaxApp/1.0'
-          }
-        }
-      );
-      const data = await response.json();
-      const current = data.properties.timeseries[0];
-      setWeather({
-        temperature: Math.round(current.data.instant.details.air_temperature),
-        precipitation: current.data.next_1_hours?.details?.precipitation_amount || 0,
-        windSpeed: Math.round(current.data.instant.details.wind_speed),
-        humidity: current.data.instant.details.relative_humidity,
-      });
-      setLoading(false);
-    } catch (error) {
-      console.error('Error fetching weather:', error);
-      setLoading(false);
-    }
-  };
+
 
   const getLocationSpecificTrails = (locationName) => {
     const trailsMap = {
@@ -957,7 +928,7 @@ export default function App() {
             <span style={{ fontSize: '40px' }}>⛷️</span>
             <div>
               <h1 style={{ fontSize: '28px', fontWeight: 'bold', margin: 0, letterSpacing: '1px' }}>DAGENS SMØRETIPS</h1>
-              <p style={{ fontSize: '14px', color: '#cbd5e1', margin: 0 }}>Din smøreassistent</p>
+              <p style={{ fontSize: '14px', color: '#cbd5e1', margin: 0 }}>Profesjonell festevoks-guide</p>
             </div>
           </div>
           
@@ -1131,37 +1102,7 @@ export default function App() {
         )}
       </div>
 
-      {/* Content */}
-      <div style={{
-        maxWidth: '1024px',
-        margin: '0 auto',
-        padding: '24px',
-        paddingBottom: '96px',
-        position: 'relative',
-        zIndex: 10
-      }}>
-        {loading ? (
-          <div style={{
-            background: 'white',
-            borderRadius: '16px',
-            padding: '32px',
-            border: '2px solid #e2e8f0',
-            textAlign: 'center'
-          }}>
-            <div style={{
-              display: 'inline-block',
-              width: '32px',
-              height: '32px',
-              border: '3px solid #e2e8f0',
-              borderTopColor: '#2563eb',
-              borderRadius: '50%',
-              animation: 'spin 1s linear infinite'
-            }}></div>
-            <p style={{ marginTop: '16px', fontSize: '18px', color: '#4b5563' }}>Henter værdata...</p>
-          </div>
-        ) : (
-          <>
-            {/* Location card */}
+
             <div style={{
               background: 'white',
               borderRadius: '16px',
@@ -1368,12 +1309,7 @@ export default function App() {
                   </div>
                 </div>
               </div>
-            )}
-          </>
-        )}
-      </div>
 
-      {/* Footer */}
       <div style={{
         position: 'fixed',
         bottom: 0,
