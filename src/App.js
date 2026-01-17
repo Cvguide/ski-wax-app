@@ -1100,9 +1100,16 @@ import React, { useState, useEffect } from 'react';
             </div>
           </>
         )}
-      </div>
 
-
+      {/* Content */}
+      <div style={{
+        maxWidth: '1024px',
+        margin: '0 auto',
+        padding: '24px',
+        paddingBottom: '96px',
+        position: 'relative',
+        zIndex: 10
+      }}>
             <div style={{
               background: 'white',
               borderRadius: '16px',
