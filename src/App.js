@@ -1,12 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { MapPin, Thermometer, Wind, Cloud, Mountain, Plus, X, Info, Navigation } from 'lucide-react';
 
-export default function SkiWaxApp() {
+export default function App() {
   const [location, setLocation] = useState({ lat: 59.91, lon: 10.75, name: 'Oslo' });
   const [weather, setWeather] = useState(null);
   const [loading, setLoading] = useState(true);
   const [customLocation, setCustomLocation] = useState('');
-  const [savedLocations, setSavedLocations] = useState([]);
   const [showAddLocation, setShowAddLocation] = useState(false);
   const [currentPage, setCurrentPage] = useState('home');
   const [trails, setTrails] = useState([]);
@@ -35,12 +33,14 @@ export default function SkiWaxApp() {
 
   useEffect(() => {
     fetchWeather(location.lat, location.lon);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
     if (currentPage === 'trails' && location) {
       fetchTrails();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentPage, location]);
 
   const getTrailColor = (difficulty) => {
@@ -54,236 +54,6 @@ export default function SkiWaxApp() {
       default: return '#3b82f6';
     }
   };
-
-  const generateRealisticCircularPath = (centerLat, centerLon, radius, points) => {
-    const path = [];
-    for (let i = 0; i <= points; i++) {
-      const angle = (i / points) * 2 * Math.PI;
-      
-      const variation = Math.sin(angle * 3) * 0.1;
-      const radiusVariation = radius * (1 + variation);
-      
-      const lat = centerLat + radiusVariation * Math.cos(angle);
-      const lon = centerLon + radiusVariation * Math.sin(angle) * 1.5;
-      
-      path.push([lat, lon]);
-    }
-    return path;
-  };
-
-  const AboutMenuContent = () => (
-    <>
-      <div 
-        className="fixed inset-0 bg-black/20 z-[90]"
-        onClick={() => setShowAboutMenu(false)}
-      />
-      <div className="fixed right-4 top-20 bg-white rounded-lg shadow-2xl border-2 border-slate-200 w-96 z-[100] max-h-[80vh] overflow-hidden flex flex-col">
-      <div className="p-6 flex-shrink-0">
-        <button
-          onClick={() => setShowAboutMenu(false)}
-          className="absolute top-3 right-3 text-gray-400 hover:text-gray-600"
-        >
-          <X className="w-5 h-5" />
-        </button>
-        
-        <h2 className="text-xl font-black text-gray-900 mb-4">Om guiden</h2>
-        
-        <div className="flex gap-1 mb-4 border-b border-gray-200">
-          <button
-            onClick={() => setAboutMenuTab('om')}
-            className={`px-3 py-2 text-sm font-semibold transition ${
-              aboutMenuTab === 'om' 
-                ? 'text-blue-600 border-b-2 border-blue-600' 
-                : 'text-gray-500 hover:text-gray-700'
-            }`}
-          >
-            Om appen
-          </button>
-          <button
-            onClick={() => setAboutMenuTab('kilder')}
-            className={`px-3 py-2 text-sm font-semibold transition ${
-              aboutMenuTab === 'kilder' 
-                ? 'text-blue-600 border-b-2 border-blue-600' 
-                : 'text-gray-500 hover:text-gray-700'
-            }`}
-          >
-            Kilder
-          </button>
-          <button
-            onClick={() => setAboutMenuTab('personvern')}
-            className={`px-3 py-2 text-sm font-semibold transition ${
-              aboutMenuTab === 'personvern' 
-                ? 'text-blue-600 border-b-2 border-blue-600' 
-                : 'text-gray-500 hover:text-gray-700'
-            }`}
-          >
-            Personvern
-          </button>
-          <button
-            onClick={() => setAboutMenuTab('kontakt')}
-            className={`px-3 py-2 text-sm font-semibold transition ${
-              aboutMenuTab === 'kontakt' 
-                ? 'text-blue-600 border-b-2 border-blue-600' 
-                : 'text-gray-500 hover:text-gray-700'
-            }`}
-          >
-            Kontakt
-          </button>
-        </div>
-      </div>
-      
-      <div className="px-6 pb-6 overflow-y-auto flex-1">
-        {aboutMenuTab === 'om' && (
-          <div className="space-y-4 text-gray-700">
-            <p className="text-sm leading-relaxed">
-              <strong className="text-gray-900">Smøreguide</strong> hjelper deg med å finne riktig skismøring basert på temperatur og værforhold, 
-              samt oppdage flotte skiløyper i hele Norge.
-            </p>
-            
-            <p className="text-sm leading-relaxed">
-              Appen gir deg værmeldinger, smøringsanbefalinger basert på Swix sine retningslinjer, og direktelenker til 
-              detaljerte løypebeskrivelser fra UT.no og andre anerkjente turressurser.
-            </p>
-            
-            <div className="pt-3 border-t border-gray-200">
-              <p className="text-xs text-gray-600 italic">
-                <strong>Ansvarsfraskrivelse:</strong> Alle råd og anbefalinger er veiledende. 
-                Vær- og løypeforhold kan endre seg raskt. Sjekk alltid lokale forhold før du drar ut.
-              </p>
-            </div>
-            
-            <div className="pt-3 border-t border-gray-200">
-              <p className="text-xs text-gray-500">
-                <strong>Versjon:</strong> 1.0<br/>
-                <strong>Sist oppdatert:</strong> Januar 2026
-              </p>
-            </div>
-          </div>
-        )}
-        
-        {aboutMenuTab === 'kilder' && (
-          <div className="space-y-4 text-gray-700">
-            <div>
-              <h3 className="font-bold text-gray-900 mb-2 text-sm">Værdata</h3>
-              <p className="text-sm leading-relaxed">
-                Værdata hentes i sanntid fra <strong>Meteorologisk institutt (met.no)</strong> via deres API. 
-                Data oppdateres løpende og viser prognoser for de neste timene.
-              </p>
-            </div>
-            
-            <div className="pt-3 border-t border-gray-200">
-              <h3 className="font-bold text-gray-900 mb-2 text-sm">Smøringsanbefalinger</h3>
-              <p className="text-sm leading-relaxed">
-                Anbefalingene er basert på <strong>Swix sine retningslinjer</strong> for skismøring, 
-                tilpasset norske forhold. Temperatur og nedbørstype avgjør hvilke produkter som anbefales.
-              </p>
-            </div>
-            
-            <div className="pt-3 border-t border-gray-200">
-              <h3 className="font-bold text-gray-900 mb-2 text-sm">Løypeinformasjon</h3>
-              <p className="text-sm leading-relaxed mb-2">
-                Løypebeskrivelser og kart hentes fra anerkjente kilder:
-              </p>
-              <ul className="text-sm space-y-1 ml-4">
-                <li>• <strong>UT.no</strong> - Den norske turistforeningens turportal</li>
-                <li>• <strong>Skisporet.no</strong> - Sanntidsinfo om preparerte løyper</li>
-                <li>• <strong>Lillehammer.com</strong> - Visit Lillehammer sine turforslag</li>
-                <li>• <strong>Lokale destinasjonsnettsider</strong></li>
-              </ul>
-            </div>
-            
-            <div className="pt-3 border-t border-gray-200">
-              <p className="text-xs text-gray-500 italic">
-                Alle lenker fører til originalkildene hvor du finner oppdatert informasjon om løypeforhold, 
-                preparering og detaljerte beskrivelser.
-              </p>
-            </div>
-          </div>
-        )}
-        
-        {aboutMenuTab === 'personvern' && (
-          <div className="space-y-4 text-gray-700">
-            <div>
-              <h3 className="font-bold text-gray-900 mb-2 text-sm">Datainnsamling</h3>
-              <p className="text-sm leading-relaxed">
-                Smøreguide samler <strong>ikke inn personopplysninger</strong>. Appen bruker kun den informasjonen 
-                du aktivt oppgir for å gi deg relevante anbefalinger.
-              </p>
-            </div>
-            
-            <div className="pt-3 border-t border-gray-200">
-              <h3 className="font-bold text-gray-900 mb-2 text-sm">Lokasjonsdata</h3>
-              <p className="text-sm leading-relaxed">
-                Stedsinformasjonen du velger brukes kun til å hente værdata fra Meteorologisk institutt. 
-                Ingen lokasjonsdata lagres eller deles med tredjeparter.
-              </p>
-            </div>
-            
-            <div className="pt-3 border-t border-gray-200">
-              <h3 className="font-bold text-gray-900 mb-2 text-sm">Informasjonskapsler (cookies)</h3>
-              <p className="text-sm leading-relaxed">
-                Appen bruker kun lokale nettleserdata for å huske dine valgte steder. 
-                Ingen sporings- eller analyseverktøy benyttes.
-              </p>
-            </div>
-            
-            <div className="pt-3 border-t border-gray-200">
-              <h3 className="font-bold text-gray-900 mb-2 text-sm">Tredjepartstjenester</h3>
-              <p className="text-sm leading-relaxed">
-                Når du klikker på lenker til UT.no, Skisporet.no eller andre eksterne nettsteder, 
-                gjelder disse sidenes egne personvernregler.
-              </p>
-            </div>
-            
-            <div className="pt-3 border-t border-gray-200">
-              <p className="text-xs text-gray-500">
-                <strong>GDPR-compliant:</strong> Appen følger EUs personvernforordning (GDPR) 
-                og norsk personvernlovgivning.
-              </p>
-            </div>
-          </div>
-        )}
-        
-        {aboutMenuTab === 'kontakt' && (
-          <div className="space-y-4 text-gray-700">
-            <p className="text-sm leading-relaxed">
-              Har du spørsmål, forslag til forbedringer, eller oppdaget feil i appen? 
-              Ta gjerne kontakt!
-            </p>
-            
-            <div className="pt-3 border-t border-gray-200">
-              <h3 className="font-bold text-gray-900 mb-3 text-sm">Kontaktinformasjon</h3>
-              <div className="space-y-2 text-sm">
-                <p className="font-medium">Halvor Ringen</p>
-                <p className="text-blue-600">
-                  <a href="tel:46899799" className="hover:underline">📞 468 99 799</a>
-                </p>
-                <p className="text-blue-600">
-                  <a href="mailto:halvor.ringen@hotmail.com" className="hover:underline break-all">
-                    ✉️ halvor.ringen@hotmail.com
-                  </a>
-                </p>
-              </div>
-            </div>
-            
-            <div className="pt-3 border-t border-gray-200">
-              <h3 className="font-bold text-gray-900 mb-2 text-sm">Tilbakemelding</h3>
-              <p className="text-sm leading-relaxed">
-                Din tilbakemelding hjelper oss med å gjøre appen bedre. Vi setter pris på forslag til:
-              </p>
-              <ul className="text-sm space-y-1 ml-4 mt-2">
-                <li>• Nye løypesteder</li>
-                <li>• Forbedringer av smøringsråd</li>
-                <li>• Nye funksjoner</li>
-                <li>• Feil eller mangler i informasjonen</li>
-              </ul>
-            </div>
-          </div>
-        )}
-      </div>
-    </div>
-    </>
-  );
 
   const fetchWeather = async (lat, lon) => {
     try {
@@ -302,7 +72,6 @@ export default function SkiWaxApp() {
         precipitation: current.data.next_1_hours?.details?.precipitation_amount || 0,
         windSpeed: Math.round(current.data.instant.details.wind_speed),
         humidity: current.data.instant.details.relative_humidity,
-        symbol: current.data.next_1_hours?.summary?.symbol_code || 'cloudy'
       });
       setLoading(false);
     } catch (error) {
@@ -317,7 +86,6 @@ export default function SkiWaxApp() {
         {
           id: 1,
           name: 'Frognerseteren-Kikut-Sognsvann',
-          coordinates: generateRealisticCircularPath(59.97, 10.72, 0.08, 45),
           difficulty: 'advanced',
           distance: '25.0',
           type: 'classic+skating',
@@ -327,7 +95,6 @@ export default function SkiWaxApp() {
         {
           id: 2,
           name: 'Sognsvann-Ullevålseter',
-          coordinates: generateRealisticCircularPath(59.97, 10.73, 0.03, 25),
           difficulty: 'easy',
           distance: '11.0',
           type: 'classic+skating',
@@ -337,7 +104,6 @@ export default function SkiWaxApp() {
         {
           id: 3,
           name: 'Sognsvann rundt',
-          coordinates: generateRealisticCircularPath(59.96, 10.72, 0.015, 20),
           difficulty: 'easy',
           distance: '3.3',
           type: 'classic',
@@ -347,7 +113,6 @@ export default function SkiWaxApp() {
         {
           id: 4,
           name: 'Frognerseteren-Ullevålseter-Sognsvann',
-          coordinates: generateRealisticCircularPath(59.99, 10.71, 0.04, 30),
           difficulty: 'intermediate',
           distance: '12.0',
           type: 'classic+skating',
@@ -357,7 +122,6 @@ export default function SkiWaxApp() {
         {
           id: 5,
           name: 'Holmenkollen-Skjennungstua',
-          coordinates: generateRealisticCircularPath(59.98, 10.74, 0.035, 28),
           difficulty: 'intermediate',
           distance: '9.0',
           type: 'classic+skating',
@@ -369,7 +133,6 @@ export default function SkiWaxApp() {
         {
           id: 1,
           name: 'Sjusjøen-Gåsbu',
-          coordinates: generateRealisticCircularPath(61.18, 10.80, 0.08, 45),
           difficulty: 'advanced',
           distance: '25.0',
           type: 'classic+skating',
@@ -379,7 +142,6 @@ export default function SkiWaxApp() {
         {
           id: 2,
           name: 'Lunkefjell rundt',
-          coordinates: generateRealisticCircularPath(61.12, 10.81, 0.05, 35),
           difficulty: 'intermediate',
           distance: '12.0',
           type: 'classic+skating',
@@ -389,7 +151,6 @@ export default function SkiWaxApp() {
         {
           id: 3,
           name: 'Gjesbuåsrunden',
-          coordinates: generateRealisticCircularPath(61.10, 10.79, 0.025, 25),
           difficulty: 'easy',
           distance: '6.0',
           type: 'classic',
@@ -399,7 +160,6 @@ export default function SkiWaxApp() {
         {
           id: 4,
           name: 'Birkebeinerløypa Sjusjøen-Lillehammer',
-          coordinates: generateRealisticCircularPath(61.14, 10.75, 0.06, 38),
           difficulty: 'intermediate',
           distance: '15.0',
           type: 'classic+skating',
@@ -409,7 +169,6 @@ export default function SkiWaxApp() {
         {
           id: 5,
           name: 'Nordseter-Hornsjøen',
-          coordinates: generateRealisticCircularPath(61.16, 10.52, 0.04, 32),
           difficulty: 'intermediate',
           distance: '13.1',
           type: 'classic+skating',
@@ -417,41 +176,75 @@ export default function SkiWaxApp() {
           trailUrl: 'https://www.lillehammer.com/opplevelser/nordseter-hornsjoen-13-1-km-p632603'
         }
       ],
+      'Gålå': [
+        {
+          id: 1,
+          name: 'Rundtur Årstulen-Lauåsen',
+          difficulty: 'advanced',
+          distance: '26.0',
+          type: 'classic+skating',
+          description: 'Flott høyfjellsløype! Tidlig preparert, ofte klar til 1. november. Flat og fin løype i høyfjellet.',
+          trailUrl: 'https://www.lillehammer.com/utforsk-regionen/rundtur-arstulen-lauasen-26-km-p1550783'
+        },
+        {
+          id: 2,
+          name: 'Gålå Vatnet rundt',
+          difficulty: 'intermediate',
+          distance: '15.6',
+          type: 'classic+skating',
+          description: 'Fin tur i all slags vær. Rundtur rundt Gålåvatnet med variert terreng.',
+          trailUrl: 'https://www.lillehammer.com/utforsk-regionen/gala-vatnet-rundt-15-6-km-p1550733'
+        },
+        {
+          id: 3,
+          name: 'Rundløype Blåbærfjell-Triltåsen',
+          difficulty: 'easy',
+          distance: '8.5',
+          type: 'classic+skating',
+          description: 'Lett løype med gode utsiktspunkter.',
+          trailUrl: 'https://www.lillehammer.com/utforsk-regionen/rundloype-blabaerfjell-triltasen-8-5-km-p1550773'
+        },
+        {
+          id: 4,
+          name: 'Blå Rundløype Fagerhøi',
+          difficulty: 'easy',
+          distance: '3.7',
+          type: 'classic',
+          description: 'Passer fint for nybegynnere. Snilt terreng gjør det enkelt å lære seg skiteknikk.',
+          trailUrl: 'https://www.lillehammer.com/utforsk-regionen/bla-rundloype-fagerhoi-3-7-km-p632733'
+        }
+      ],
       'Norefjell': [
         {
           id: 1,
           name: 'Norefjell Toppen',
-          coordinates: generateRealisticCircularPath(60.18, 9.55, 0.08, 45),
           difficulty: 'advanced',
           distance: '20.0',
           type: 'classic+skating',
-          description: 'Krevende tur til Norefjells høyeste punkt. Starter fra hotellområdet, opp gjennom variert fjellterreng. Fantastisk utsikt over Krøderen og omkringliggende fjell.',
+          description: 'Krevende tur til Norefjells høyeste punkt. Starter fra hotellområdet, opp gjennom variert fjellterreng.',
           trailUrl: 'https://www.visitnorefjell.com/no/se-og-gjore/langrenn/'
         },
         {
           id: 2,
           name: 'Høgevarde rundt',
-          coordinates: generateRealisticCircularPath(60.19, 9.56, 0.05, 35),
           difficulty: 'intermediate',
           distance: '10.0',
           type: 'classic+skating',
-          description: 'Flott rundtur gjennom åpent høyfjellsterreng. Lett kupert med noen fine utsiktspunkter underveis.',
+          description: 'Flott rundtur gjennom åpent høyfjellsterreng.',
           trailUrl: 'https://www.visitnorefjell.com/no/se-og-gjore/langrenn/'
         },
         {
           id: 3,
           name: 'Hotellområdet rundt',
-          coordinates: generateRealisticCircularPath(60.17, 9.54, 0.025, 25),
           difficulty: 'easy',
           distance: '5.0',
           type: 'classic',
-          description: 'Lett rundtur fra hotellområdet. Går på flatt til lett kupert terreng, godt merket.',
+          description: 'Lett rundtur fra hotellområdet. Går på flatt til lett kupert terreng.',
           trailUrl: 'https://www.visitnorefjell.com/no/se-og-gjore/langrenn/'
         },
         {
           id: 4,
           name: 'Tritten-runden',
-          coordinates: generateRealisticCircularPath(60.19, 9.57, 0.04, 30),
           difficulty: 'intermediate',
           distance: '8.0',
           type: 'classic+skating',
@@ -463,17 +256,15 @@ export default function SkiWaxApp() {
         {
           id: 1,
           name: 'Østby-Fageråsen',
-          coordinates: generateRealisticCircularPath(61.31, 12.26, 0.08, 45),
           difficulty: 'advanced',
           distance: '24.0',
           type: 'classic+skating',
-          description: 'Langtur fra Østby mot Fageråsen. Går gjennom Trysils største sammenhengende løypenett. Variert og kupert terreng.',
+          description: 'Langtur fra Østby mot Fageråsen. Går gjennom Trysils største sammenhengende løypenett.',
           trailUrl: 'https://www.skisporet.no/map/destination/61'
         },
         {
           id: 2,
           name: 'Trysil Sentrum rundt',
-          coordinates: generateRealisticCircularPath(61.32, 12.27, 0.05, 35),
           difficulty: 'intermediate',
           distance: '11.0',
           type: 'classic+skating',
@@ -483,7 +274,6 @@ export default function SkiWaxApp() {
         {
           id: 3,
           name: 'Skistadion rundt',
-          coordinates: generateRealisticCircularPath(61.30, 12.25, 0.025, 25),
           difficulty: 'easy',
           distance: '4.5',
           type: 'classic',
@@ -493,11 +283,10 @@ export default function SkiWaxApp() {
         {
           id: 4,
           name: 'Innbygda-løypa',
-          coordinates: generateRealisticCircularPath(61.33, 12.24, 0.04, 32),
           difficulty: 'intermediate',
           distance: '9.0',
           type: 'classic+skating',
-          description: 'Rundtur i Innbygda. Trivelig tur gjennom skogen med noen fine partier langs vann.',
+          description: 'Rundtur i Innbygda. Trivelig tur gjennom skogen.',
           trailUrl: 'https://www.skisporet.no/map/destination/61'
         }
       ],
@@ -505,41 +294,37 @@ export default function SkiWaxApp() {
         {
           id: 1,
           name: 'Sjusjøen-Gåsbu',
-          coordinates: generateRealisticCircularPath(61.18, 10.80, 0.08, 45),
           difficulty: 'advanced',
           distance: '26.0',
           type: 'classic+skating',
-          description: 'Start i Birkebeinerløypa, via Ljøsheim til Hamarsæterhøgda. Fortsetter over Prestsætra, Lavlia og Målia til Gåsbu. Klassisk langtur.',
+          description: 'Start i Birkebeinerløypa, via Ljøsheim til Hamarsæterhøgda.',
           trailUrl: 'https://ut.no/turforslag/119263'
         },
         {
           id: 2,
           name: 'Lunkefjell rundt',
-          coordinates: generateRealisticCircularPath(61.19, 10.81, 0.05, 35),
           difficulty: 'intermediate',
           distance: '13.0',
           type: 'classic+skating',
-          description: 'Fra Nordseter via Nysæterhøgda til Lunkefjell (1012 moh). Fantastisk utsikt fra toppen.',
+          description: 'Fra Nordseter via Nysæterhøgda til Lunkefjell (1012 moh).',
           trailUrl: 'https://ut.no/turforslag/117767'
         },
         {
           id: 3,
           name: 'Gjesbuåsrunden',
-          coordinates: generateRealisticCircularPath(61.17, 10.79, 0.025, 25),
           difficulty: 'easy',
           distance: '5.5',
           type: 'classic',
-          description: 'Fin rundtur fra Sjusjøen Langrennsarena. Lett kupert, kan gås begge veier.',
+          description: 'Fin rundtur fra Sjusjøen Langrennsarena.',
           trailUrl: 'https://ut.no/turforslag/115241'
         },
         {
           id: 4,
           name: 'Sjusjøen rundt',
-          coordinates: generateRealisticCircularPath(61.18, 10.78, 0.03, 28),
           difficulty: 'easy',
           distance: '8.0',
           type: 'classic+skating',
-          description: 'Flat rundtur rundt Sjusjøen sentrum. Flott tur for hele familien.',
+          description: 'Flat rundtur rundt Sjusjøen sentrum.',
           trailUrl: 'https://www.skisporet.no/map/destination/53'
         }
       ],
@@ -547,100 +332,43 @@ export default function SkiWaxApp() {
         {
           id: 1,
           name: 'Beitostølen Rundt',
-          coordinates: generateRealisticCircularPath(61.25, 8.92, 0.08, 45),
           difficulty: 'advanced',
           distance: '28.0',
           type: 'classic+skating',
-          description: 'Langtur gjennom Beitostølens høyfjellsområde. Går over både snaufjellet og gjennom bjørkeskog. Flott utsikt mot Jotunheimen.',
+          description: 'Langtur gjennom Beitostølens høyfjellsområde.',
           trailUrl: 'https://www.skisporet.no/map/destination/50'
         },
         {
           id: 2,
           name: 'Raudalen-Øygardstølen',
-          coordinates: generateRealisticCircularPath(61.26, 8.93, 0.05, 35),
           difficulty: 'intermediate',
           distance: '14.0',
           type: 'classic+skating',
-          description: 'Rundtur via Raudalen til Øygardstølen. Typisk høyfjellstur med flott panorama.',
+          description: 'Rundtur via Raudalen til Øygardstølen.',
           trailUrl: 'https://www.skisporet.no/map/destination/50'
         },
         {
           id: 3,
           name: 'Stadion rundt',
-          coordinates: generateRealisticCircularPath(61.24, 8.91, 0.025, 25),
           difficulty: 'easy',
           distance: '4.0',
           type: 'classic',
-          description: 'Lett rundtur fra stadion. Oversiktlig løype i flott høyfjellsområde.',
+          description: 'Lett rundtur fra stadion.',
           trailUrl: 'https://www.skisporet.no/map/destination/50'
-        },
-        {
-          id: 5,
-          name: 'Heggebottane',
-          coordinates: generateRealisticCircularPath(61.26, 8.94, 0.04, 32),
-          difficulty: 'intermediate',
-          distance: '11.0',
-          type: 'classic+skating',
-          description: 'Rundtur via Heggebottane. Flott tur i åpent høyfjellsterreng.',
-          trailUrl: 'https://www.skisporet.no/map/destination/50'
-        }
-      ],
-      'Gålå': [
-        {
-          id: 1,
-          name: 'Rundtur Årstulen-Lauåsen',
-          coordinates: generateRealisticCircularPath(61.55, 9.40, 0.08, 45),
-          difficulty: 'advanced',
-          distance: '26.0',
-          type: 'classic+skating',
-          description: 'Flott høyfjellsløype! Tidlig preparert, ofte klar til 1. november. Flat og fin løype i høyfjellet.',
-          trailUrl: 'https://www.lillehammer.com/utforsk-regionen/rundtur-arstulen-lauasen-26-km-p1550783'
-        },
-        {
-          id: 2,
-          name: 'Gålå Vatnet rundt',
-          coordinates: generateRealisticCircularPath(61.55, 9.41, 0.055, 38),
-          difficulty: 'intermediate',
-          distance: '15.6',
-          type: 'classic+skating',
-          description: 'Fin tur i all slags vær. Rundtur rundt Gålåvatnet med variert terreng.',
-          trailUrl: 'https://www.lillehammer.com/utforsk-regionen/gala-vatnet-rundt-15-6-km-p1550733'
-        },
-        {
-          id: 3,
-          name: 'Rundløype Blåbærfjell-Triltåsen',
-          coordinates: generateRealisticCircularPath(61.56, 9.39, 0.035, 30),
-          difficulty: 'easy',
-          distance: '8.5',
-          type: 'classic+skating',
-          description: 'Lett løype med gode utsiktspunkter.',
-          trailUrl: 'https://www.lillehammer.com/utforsk-regionen/rundloype-blabaerfjell-triltasen-8-5-km-p1550773'
         },
         {
           id: 4,
-          name: 'Blå Rundløype Fagerhøi',
-          coordinates: generateRealisticCircularPath(61.54, 9.42, 0.02, 22),
-          difficulty: 'easy',
-          distance: '3.7',
-          type: 'classic',
-          description: 'Passer fint for nybegynnere. Snilt terreng gjør det enkelt å lære seg skiteknikk.',
-          trailUrl: 'https://www.lillehammer.com/utforsk-regionen/bla-rundloype-fagerhoi-3-7-km-p632733'
+          name: 'Heggebottane',
+          difficulty: 'intermediate',
+          distance: '11.0',
+          type: 'classic+skating',
+          description: 'Rundtur via Heggebottane.',
+          trailUrl: 'https://www.skisporet.no/map/destination/50'
         }
       ]
     };
     
-    return trailsMap[locationName] || [
-      {
-        id: 1,
-        name: `${locationName} Rundtur`,
-        coordinates: generateRealisticCircularPath(location.lat, location.lon, 0.05, 30),
-        difficulty: 'intermediate',
-        distance: '10.0',
-        type: 'classic+skating',
-        description: `Fin rundtur i ${locationName}-området. Variert terreng med god standard på løypene.`,
-        trailUrl: null
-      }
-    ];
+    return trailsMap[locationName] || [];
   };
 
   const fetchTrails = () => {
@@ -678,128 +406,379 @@ export default function SkiWaxApp() {
     if (!weather) return null;
 
     const temp = weather.temperature;
-    const hasSnow = weather.precipitation > 0;
 
     if (temp > 0) {
       return {
-        condition: 'Våte forhold / Smelting',
-        products: ['CH7X (Rød)', 'CH8X (Gul)', 'FC8X (Gul fluor)'],
-        tip: 'Bruk varmt voks. Smelteforhold krever spesielle løsninger.',
-        color: 'bg-yellow-500'
+        category: 'Hardvoks',
+        name: 'Rød Spesial',
+        letter: 'V',
+        condition: 'Våt gammel snø',
+        tip: 'Påfør i 2-4 lag. Kork godt mellom lag. God mot våt snø og fuktige forhold.',
+        color: '#ef4444'
+      };
+    } else if (temp >= -2) {
+      return {
+        category: 'Hardvoks',
+        name: 'Rød',
+        letter: 'V',
+        condition: 'Fuktig snø rundt 0°C',
+        tip: 'Påfør i 2-3 lag. Kork grundig mellom hvert lag for best feste.',
+        color: '#dc2626'
       };
     } else if (temp >= -5) {
       return {
-        condition: 'Fuktig snø',
-        products: ['VR55 (Lilla)', 'VR45 (Blå)'],
-        tip: 'Gode forhold for langrenn. Perfekt for klassisk stil.',
-        color: 'bg-purple-500'
+        category: 'Hardvoks',
+        name: 'Lilla Spesial',
+        letter: 'VP',
+        condition: 'Fuktig nysnø',
+        tip: 'Påfør i 2-3 lag, kork godt mellom lag. Ideelt for fuktig nysnø.',
+        color: '#a855f7'
       };
-    } else if (temp >= -12) {
+    } else if (temp >= -10) {
       return {
-        condition: 'Tørr snø',
-        products: ['VR40 (Blå)', 'VR35 (Turkis)'],
-        tip: 'Utmerkede forhold! Typisk norsk vintervær.',
-        color: 'bg-blue-500'
+        category: 'Hardvoks',
+        name: 'Blå Spesial',
+        letter: 'VB',
+        condition: 'Fin kornete snø',
+        tip: 'Påfør i 2-3 lag. Godt allround-voks for temperert vintervær.',
+        color: '#3b82f6'
+      };
+    } else if (temp >= -15) {
+      return {
+        category: 'Hardvoks',
+        name: 'Grønn',
+        letter: 'VG',
+        condition: 'Kald fin snø',
+        tip: 'Påfør i 2-3 lag. Utmerket for kalde forhold med fin kornstruktur.',
+        color: '#22c55e'
       };
     } else {
       return {
-        condition: 'Veldig kaldt',
-        products: ['VR30 (Grønn)', 'VR25 (Lys grønn)', 'FC78S (Polar fluor)'],
-        tip: 'Ekstremt kalde forhold. Bruk spesialvoks.',
-        color: 'bg-green-500'
+        category: 'Hardvoks',
+        name: 'Grønn Spesial',
+        letter: 'VGS',
+        condition: 'Veldig kald fin snø',
+        tip: 'Påfør i 3-4 lag for ekstra kalde forhold. Kork grundig.',
+        color: '#16a34a'
       };
     }
   };
 
   const recommendation = getWaxRecommendation();
 
+  // TRAILS PAGE
   if (currentPage === 'trails') {
     return (
-      <div className="min-h-screen bg-gradient-to-b from-slate-400 via-slate-500 to-slate-600 relative overflow-hidden">
-        <div className="absolute inset-0 overflow-hidden pointer-events-none">
-          <svg className="absolute bottom-0 w-full h-96" viewBox="0 0 1200 400" preserveAspectRatio="none">
-            <path d="M0,400 L0,200 Q150,150 300,180 T600,160 T900,190 T1200,170 L1200,400 Z" fill="#475569" opacity="0.4"/>
-            <path d="M0,400 L0,220 Q200,180 400,210 T800,200 T1200,220 L1200,400 Z" fill="#334155" opacity="0.5"/>
-            <path d="M0,400 L300,400 L600,100 L900,400 L1200,400 Z" fill="#1e293b"/>
-          </svg>
-        </div>
+      <div style={{
+        minHeight: '100vh',
+        background: 'linear-gradient(to bottom, #94a3b8, #64748b, #475569)',
+        position: 'relative',
+        overflow: 'hidden'
+      }}>
+        {/* Mountain background */}
+        <svg style={{
+          position: 'absolute',
+          bottom: 0,
+          width: '100%',
+          height: '384px',
+          pointerEvents: 'none'
+        }} viewBox="0 0 1200 400" preserveAspectRatio="none">
+          <path d="M0,400 L0,200 Q150,150 300,180 T600,160 T900,190 T1200,170 L1200,400 Z" fill="#475569" opacity="0.4"/>
+          <path d="M0,400 L0,220 Q200,180 400,210 T800,200 T1200,220 L1200,400 Z" fill="#334155" opacity="0.5"/>
+          <path d="M0,400 L300,400 L600,100 L900,400 L1200,400 Z" fill="#1e293b"/>
+        </svg>
         
-        <div className="bg-gradient-to-r from-slate-600 to-slate-700 text-white p-6 shadow-xl relative z-50">
-          <div className="max-w-4xl mx-auto flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <Mountain className="w-8 h-8" />
+        {/* Header */}
+        <div style={{
+          background: 'linear-gradient(to right, #475569, #334155)',
+          color: 'white',
+          padding: '24px',
+          boxShadow: '0 4px 6px rgba(0,0,0,0.1)',
+          position: 'relative',
+          zIndex: 50
+        }}>
+          <div style={{
+            maxWidth: '1024px',
+            margin: '0 auto',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between'
+          }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+              <span style={{ fontSize: '32px' }}>⛰️</span>
               <div>
-                <h1 className="text-2xl font-black">Skiløyper</h1>
-                <p className="text-slate-200 text-sm">{location.name}</p>
+                <h1 style={{ fontSize: '24px', fontWeight: 'bold', margin: 0 }}>Skiløyper</h1>
+                <p style={{ fontSize: '14px', color: '#cbd5e1', margin: 0 }}>{location.name}</p>
               </div>
             </div>
             
+            {/* Hamburger menu */}
             <button
               onClick={() => setShowAboutMenu(!showAboutMenu)}
-              className="p-2 hover:bg-white/20 rounded-lg transition"
-              aria-label="Meny"
+              style={{
+                padding: '8px',
+                background: 'rgba(255,255,255,0.2)',
+                border: 'none',
+                borderRadius: '8px',
+                cursor: 'pointer',
+                transition: 'all 0.2s'
+              }}
             >
-              <div className="w-6 h-0.5 bg-white mb-1.5"></div>
-              <div className="w-6 h-0.5 bg-white mb-1.5"></div>
-              <div className="w-6 h-0.5 bg-white"></div>
+              <div style={{ width: '24px', height: '2px', background: 'white', marginBottom: '6px' }}></div>
+              <div style={{ width: '24px', height: '2px', background: 'white', marginBottom: '6px' }}></div>
+              <div style={{ width: '24px', height: '2px', background: 'white' }}></div>
             </button>
           </div>
           
-          {showAboutMenu && <AboutMenuContent />}
+          {/* About Menu */}
+          {showAboutMenu && (
+            <>
+              <div 
+                onClick={() => setShowAboutMenu(false)}
+                style={{
+                  position: 'fixed',
+                  inset: 0,
+                  background: 'rgba(0,0,0,0.2)',
+                  zIndex: 90
+                }}
+              />
+              <div style={{
+                position: 'fixed',
+                right: '16px',
+                top: '80px',
+                background: 'white',
+                borderRadius: '8px',
+                boxShadow: '0 20px 25px rgba(0,0,0,0.1)',
+                border: '2px solid #e2e8f0',
+                width: '384px',
+                zIndex: 100,
+                maxHeight: '80vh',
+                overflow: 'hidden',
+                display: 'flex',
+                flexDirection: 'column'
+              }}>
+                <div style={{ padding: '24px', flexShrink: 0 }}>
+                  <button
+                    onClick={() => setShowAboutMenu(false)}
+                    style={{
+                      position: 'absolute',
+                      top: '12px',
+                      right: '12px',
+                      background: 'none',
+                      border: 'none',
+                      color: '#9ca3af',
+                      fontSize: '20px',
+                      cursor: 'pointer'
+                    }}
+                  >
+                    ×
+                  </button>
+                  
+                  <h2 style={{ fontSize: '20px', fontWeight: 'bold', color: '#1f2937', marginBottom: '16px' }}>Om guiden</h2>
+                  
+                  <div style={{ display: 'flex', gap: '4px', marginBottom: '16px', borderBottom: '1px solid #e5e7eb' }}>
+                    {['om', 'kilder', 'personvern', 'kontakt'].map(tab => (
+                      <button
+                        key={tab}
+                        onClick={() => setAboutMenuTab(tab)}
+                        style={{
+                          padding: '8px 12px',
+                          fontSize: '14px',
+                          fontWeight: '600',
+                          background: 'none',
+                          border: 'none',
+                          borderBottom: aboutMenuTab === tab ? '2px solid #2563eb' : 'none',
+                          color: aboutMenuTab === tab ? '#2563eb' : '#6b7280',
+                          cursor: 'pointer',
+                          transition: 'all 0.2s'
+                        }}
+                      >
+                        {tab === 'om' ? 'Om appen' : tab === 'kilder' ? 'Kilder' : tab === 'personvern' ? 'Personvern' : 'Kontakt'}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+                
+                <div style={{ padding: '0 24px 24px', overflowY: 'auto', flex: 1 }}>
+                  {aboutMenuTab === 'om' && (
+                    <div style={{ color: '#4b5563', fontSize: '14px', lineHeight: '1.6' }}>
+                      <p><strong style={{ color: '#1f2937' }}>Smøreguide</strong> hjelper deg med å finne riktig skismøring basert på temperatur og værforhold, samt oppdage flotte skiløyper i hele Norge.</p>
+                      <p>Appen gir deg værmeldinger, smøringsanbefalinger basert på Swix sine retningslinjer, og direktelenker til detaljerte løypebeskrivelser.</p>
+                      <div style={{ paddingTop: '12px', borderTop: '1px solid #e5e7eb', marginTop: '12px' }}>
+                        <p style={{ fontSize: '12px', color: '#6b7280', fontStyle: 'italic' }}>
+                          <strong>Ansvarsfraskrivelse:</strong> Alle råd og anbefalinger er veiledende. Sjekk alltid lokale forhold før du drar ut.
+                        </p>
+                      </div>
+                      <div style={{ paddingTop: '12px', borderTop: '1px solid #e5e7eb', marginTop: '12px' }}>
+                        <p style={{ fontSize: '12px', color: '#6b7280' }}>
+                          <strong>Versjon:</strong> 1.0<br/>
+                          <strong>Sist oppdatert:</strong> Januar 2026
+                        </p>
+                      </div>
+                    </div>
+                  )}
+                  
+                  {aboutMenuTab === 'kilder' && (
+                    <div style={{ color: '#4b5563', fontSize: '14px', lineHeight: '1.6' }}>
+                      <div style={{ marginBottom: '16px' }}>
+                        <h3 style={{ fontWeight: 'bold', color: '#1f2937', marginBottom: '8px', fontSize: '14px' }}>Værdata</h3>
+                        <p>Værdata hentes i sanntid fra <strong>Meteorologisk institutt (met.no)</strong> via deres API.</p>
+                      </div>
+                      <div style={{ paddingTop: '12px', borderTop: '1px solid #e5e7eb', marginBottom: '16px' }}>
+                        <h3 style={{ fontWeight: 'bold', color: '#1f2937', marginBottom: '8px', fontSize: '14px' }}>Smøringsanbefalinger</h3>
+                        <p>Anbefalingene er basert på <strong>Swix sine retningslinjer</strong> for skismøring.</p>
+                      </div>
+                      <div style={{ paddingTop: '12px', borderTop: '1px solid #e5e7eb' }}>
+                        <h3 style={{ fontWeight: 'bold', color: '#1f2937', marginBottom: '8px', fontSize: '14px' }}>Løypeinformasjon</h3>
+                        <p style={{ marginBottom: '8px' }}>Løypebeskrivelser hentes fra:</p>
+                        <ul style={{ marginLeft: '16px', lineHeight: '1.8' }}>
+                          <li><strong>UT.no</strong> - Den norske turistforeningens turportal</li>
+                          <li><strong>Skisporet.no</strong> - Sanntidsinfo om preparerte løyper</li>
+                          <li><strong>Lillehammer.com</strong> - Visit Lillehammer sine turforslag</li>
+                        </ul>
+                      </div>
+                    </div>
+                  )}
+                  
+                  {aboutMenuTab === 'personvern' && (
+                    <div style={{ color: '#4b5563', fontSize: '14px', lineHeight: '1.6' }}>
+                      <div style={{ marginBottom: '16px' }}>
+                        <h3 style={{ fontWeight: 'bold', color: '#1f2937', marginBottom: '8px', fontSize: '14px' }}>Datainnsamling</h3>
+                        <p>Smøreguide samler <strong>ikke inn personopplysninger</strong>.</p>
+                      </div>
+                      <div style={{ paddingTop: '12px', borderTop: '1px solid #e5e7eb', marginBottom: '16px' }}>
+                        <h3 style={{ fontWeight: 'bold', color: '#1f2937', marginBottom: '8px', fontSize: '14px' }}>Lokasjonsdata</h3>
+                        <p>Stedsinformasjonen du velger brukes kun til å hente værdata. Ingen lokasjonsdata lagres eller deles.</p>
+                      </div>
+                      <div style={{ paddingTop: '12px', borderTop: '1px solid #e5e7eb', marginBottom: '16px' }}>
+                        <h3 style={{ fontWeight: 'bold', color: '#1f2937', marginBottom: '8px', fontSize: '14px' }}>GDPR</h3>
+                        <p style={{ fontSize: '12px', color: '#6b7280' }}>Appen følger EUs personvernforordning (GDPR) og norsk personvernlovgivning.</p>
+                      </div>
+                    </div>
+                  )}
+                  
+                  {aboutMenuTab === 'kontakt' && (
+                    <div style={{ color: '#4b5563', fontSize: '14px', lineHeight: '1.6' }}>
+                      <p>Har du spørsmål eller forslag til forbedringer?</p>
+                      <div style={{ paddingTop: '12px', borderTop: '1px solid #e5e7eb', marginTop: '12px' }}>
+                        <h3 style={{ fontWeight: 'bold', color: '#1f2937', marginBottom: '12px', fontSize: '14px' }}>Kontaktinformasjon</h3>
+                        <div style={{ lineHeight: '2' }}>
+                          <p style={{ fontWeight: '600' }}>Halvor Ringen</p>
+                          <p style={{ color: '#2563eb' }}>
+                            <a href="tel:46899799" style={{ color: '#2563eb', textDecoration: 'none' }}>📞 468 99 799</a>
+                          </p>
+                          <p style={{ color: '#2563eb' }}>
+                            <a href="mailto:halvor.ringen@hotmail.com" style={{ color: '#2563eb', textDecoration: 'none', wordBreak: 'break-all' }}>
+                              ✉️ halvor.ringen@hotmail.com
+                            </a>
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              </div>
+            </>
+          )}
         </div>
 
-        <div className="max-w-4xl mx-auto px-4 py-6 space-y-4 pb-24 relative z-10">
-          <div className="bg-gradient-to-br from-blue-500 to-blue-600 rounded-2xl shadow-xl overflow-hidden border-2 border-blue-400 text-white p-6">
-            <div className="flex items-center gap-2 mb-2">
-              <MapPin className="w-6 h-6" />
-              <h2 className="text-2xl font-black">{location.name}</h2>
+        {/* Content */}
+        <div style={{
+          maxWidth: '1024px',
+          margin: '0 auto',
+          padding: '24px',
+          paddingBottom: '96px',
+          position: 'relative',
+          zIndex: 10
+        }}>
+          <div style={{
+            background: 'linear-gradient(135deg, #3b82f6, #2563eb)',
+            borderRadius: '16px',
+            boxShadow: '0 10px 15px rgba(0,0,0,0.1)',
+            overflow: 'hidden',
+            border: '2px solid #60a5fa',
+            color: 'white',
+            padding: '24px',
+            marginBottom: '16px'
+          }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
+              <span style={{ fontSize: '24px' }}>📍</span>
+              <h2 style={{ fontSize: '24px', fontWeight: 'bold', margin: 0 }}>{location.name}</h2>
             </div>
             
             {trails.length > 0 && (
-              <div className="bg-white/20 backdrop-blur-sm rounded-lg px-4 py-3 mt-4">
-                <div className="flex items-center gap-3">
-                  <Mountain className="w-8 h-8" />
-                  <div className="text-lg font-bold">Skiløyper i området</div>
+              <div style={{
+                background: 'rgba(255,255,255,0.2)',
+                backdropFilter: 'blur(10px)',
+                borderRadius: '8px',
+                padding: '12px 16px',
+                marginTop: '16px'
+              }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                  <span style={{ fontSize: '32px' }}>⛰️</span>
+                  <div style={{ fontSize: '18px', fontWeight: 'bold' }}>Skiløyper i området</div>
                 </div>
               </div>
             )}
           </div>
 
           {loadingTrails ? (
-            <div className="bg-white rounded-2xl p-8 border-2 border-slate-200">
-              <div className="flex items-center justify-center space-x-3">
-                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
-                <span className="text-lg text-gray-700">Henter løyper...</span>
-              </div>
+            <div style={{
+              background: 'white',
+              borderRadius: '16px',
+              padding: '32px',
+              border: '2px solid #e2e8f0',
+              textAlign: 'center'
+            }}>
+              <div style={{
+                display: 'inline-block',
+                width: '32px',
+                height: '32px',
+                border: '3px solid #e2e8f0',
+                borderTopColor: '#2563eb',
+                borderRadius: '50%',
+                animation: 'spin 1s linear infinite'
+              }}></div>
+              <p style={{ marginTop: '16px', fontSize: '18px', color: '#4b5563' }}>Henter løyper...</p>
             </div>
           ) : (
-            <div className="space-y-3">
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
               {trails.map((trail) => (
                 <div
                   key={trail.id}
-                  className="bg-white rounded-xl shadow-lg border-2 border-slate-200 overflow-hidden transition hover:shadow-xl"
+                  style={{
+                    background: 'white',
+                    borderRadius: '12px',
+                    boxShadow: '0 4px 6px rgba(0,0,0,0.1)',
+                    border: '2px solid #e2e8f0',
+                    overflow: 'hidden',
+                    transition: 'all 0.2s'
+                  }}
                 >
-                  <div
-                    className="h-2"
-                    style={{ backgroundColor: getTrailColor(trail.difficulty) }}
-                  ></div>
+                  <div style={{ height: '8px', background: getTrailColor(trail.difficulty) }}></div>
                   
-                  <div className="p-5">
-                    <div className="flex items-start justify-between mb-3">
-                      <div className="flex-1">
-                        <div className="flex items-center gap-2 mb-2">
-                          <div className={`w-3 h-3 rounded-full ${
-                            trail.difficulty === 'easy' || trail.difficulty === 'lett' 
-                              ? 'bg-green-500'
-                              : trail.difficulty === 'advanced' || trail.difficulty === 'vanskelig'
-                              ? 'bg-red-500'
-                              : 'bg-blue-500'
-                          }`}></div>
-                          <h3 className="font-black text-gray-900 text-xl">{trail.name}</h3>
+                  <div style={{ padding: '20px' }}>
+                    <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: '12px' }}>
+                      <div style={{ flex: 1 }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
+                          <div style={{
+                            width: '12px',
+                            height: '12px',
+                            borderRadius: '50%',
+                            background: getTrailColor(trail.difficulty)
+                          }}></div>
+                          <h3 style={{ fontWeight: 'bold', color: '#1f2937', fontSize: '20px', margin: 0 }}>{trail.name}</h3>
                         </div>
-                        <div className="flex items-center gap-2 flex-wrap">
+                        <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
                           {trail.distance && (
-                            <span className="px-3 py-1 bg-slate-100 text-slate-700 rounded-full text-xs font-bold">
+                            <span style={{
+                              padding: '4px 12px',
+                              background: '#f1f5f9',
+                              color: '#475569',
+                              borderRadius: '20px',
+                              fontSize: '12px',
+                              fontWeight: 'bold'
+                            }}>
                               {trail.distance} km
                             </span>
                           )}
@@ -809,20 +788,38 @@ export default function SkiWaxApp() {
 
                     <button
                       onClick={() => setSelectedTrail(selectedTrail === trail.id ? null : trail.id)}
-                      className="w-full text-left"
+                      style={{
+                        width: '100%',
+                        textAlign: 'left',
+                        background: 'none',
+                        border: 'none',
+                        cursor: 'pointer',
+                        padding: 0
+                      }}
                     >
-                      <div className="flex items-center justify-between text-blue-600 hover:text-blue-700 font-semibold">
+                      <div style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'space-between',
+                        color: '#2563eb',
+                        fontWeight: '600',
+                        fontSize: '14px'
+                      }}>
                         <span>Se detaljer</span>
-                        <span className="text-xl">{selectedTrail === trail.id ? '−' : '+'}</span>
+                        <span style={{ fontSize: '20px' }}>{selectedTrail === trail.id ? '−' : '+'}</span>
                       </div>
                     </button>
 
                     {selectedTrail === trail.id && (
-                      <div className="mt-4 pt-4 border-t border-slate-200 space-y-3">
-                        <p className="text-slate-700 leading-relaxed">{trail.description}</p>
+                      <div style={{
+                        marginTop: '16px',
+                        paddingTop: '16px',
+                        borderTop: '1px solid #e2e8f0'
+                      }}>
+                        <p style={{ color: '#475569', lineHeight: '1.6', marginBottom: '12px' }}>{trail.description}</p>
                         
-                        <div className="flex items-center gap-2 text-sm text-slate-600">
-                          <span className="font-semibold">Type:</span>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '14px', color: '#64748b', marginBottom: '12px' }}>
+                          <span style={{ fontWeight: '600' }}>Type:</span>
                           <span>{trail.type}</span>
                         </div>
 
@@ -831,9 +828,21 @@ export default function SkiWaxApp() {
                             href={trail.trailUrl}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="block w-full bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white text-center py-4 rounded-lg font-bold transition shadow-lg"
+                            style={{
+                              display: 'block',
+                              width: '100%',
+                              background: 'linear-gradient(to right, #2563eb, #1d4ed8)',
+                              color: 'white',
+                              textAlign: 'center',
+                              padding: '16px',
+                              borderRadius: '8px',
+                              fontWeight: 'bold',
+                              textDecoration: 'none',
+                              transition: 'all 0.2s',
+                              boxShadow: '0 4px 6px rgba(0,0,0,0.1)'
+                            }}
                           >
-                            🗺️ Se kart og full beskrivelse på UT.no
+                            🗺️ Se kart og full beskrivelse
                           </a>
                         )}
                       </div>
@@ -845,18 +854,55 @@ export default function SkiWaxApp() {
           )}
         </div>
 
-        <div className="fixed bottom-0 left-0 right-0 bg-gradient-to-r from-slate-600 to-slate-700 border-t-2 border-slate-500 shadow-2xl z-20">
-          <div className="max-w-4xl mx-auto px-4 py-3 flex gap-2">
+        {/* Footer */}
+        <div style={{
+          position: 'fixed',
+          bottom: 0,
+          left: 0,
+          right: 0,
+          background: 'linear-gradient(to right, #475569, #334155)',
+          borderTop: '2px solid #64748b',
+          boxShadow: '0 -4px 6px rgba(0,0,0,0.1)',
+          zIndex: 20
+        }}>
+          <div style={{
+            maxWidth: '1024px',
+            margin: '0 auto',
+            padding: '12px 16px',
+            display: 'flex',
+            gap: '8px'
+          }}>
             <button
               onClick={() => setCurrentPage('home')}
-              className="flex-1 bg-white/20 hover:bg-white/30 py-4 rounded-xl transition font-bold text-lg text-white flex items-center justify-center gap-2"
+              style={{
+                flex: 1,
+                background: 'rgba(255,255,255,0.2)',
+                color: 'white',
+                padding: '16px',
+                borderRadius: '12px',
+                border: 'none',
+                fontWeight: 'bold',
+                fontSize: '16px',
+                cursor: 'pointer',
+                transition: 'all 0.2s'
+              }}
             >
-              <span>🎿</span><span>Smøring</span>
+              🎿 Smøring
             </button>
             <button
-              className="flex-1 bg-white hover:bg-slate-50 py-4 rounded-xl transition font-bold text-lg text-slate-700 flex items-center justify-center gap-2"
+              style={{
+                flex: 1,
+                background: 'white',
+                color: '#334155',
+                padding: '16px',
+                borderRadius: '12px',
+                border: 'none',
+                fontWeight: 'bold',
+                fontSize: '16px',
+                cursor: 'pointer'
+              }}
             >
-              <span>🏔️</span><span>Løyper</span>
+              🏔️ Løyper
             </button>
           </div>
         </div>
@@ -864,82 +910,337 @@ export default function SkiWaxApp() {
     );
   }
 
+  // HOME PAGE
   return (
-    <div className="min-h-screen bg-gradient-to-b from-slate-400 via-slate-500 to-slate-600 relative overflow-hidden">
-      <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <svg className="absolute bottom-0 w-full h-96" viewBox="0 0 1200 400" preserveAspectRatio="none">
-          <path d="M0,400 L0,200 Q150,150 300,180 T600,160 T900,190 T1200,170 L1200,400 Z" fill="#475569" opacity="0.4"/>
-          <path d="M0,400 L0,220 Q200,180 400,210 T800,200 T1200,220 L1200,400 Z" fill="#334155" opacity="0.5"/>
-          <path d="M0,400 L300,400 L600,100 L900,400 L1200,400 Z" fill="#1e293b"/>
-        </svg>
-      </div>
+    <div style={{
+      minHeight: '100vh',
+      background: 'linear-gradient(to bottom, #94a3b8, #64748b, #475569)',
+      position: 'relative',
+      overflow: 'hidden'
+    }}>
+      <style>{`
+        @keyframes spin {
+          to { transform: rotate(360deg); }
+        }
+      `}</style>
       
-      <div className="bg-gradient-to-r from-slate-600 to-slate-700 text-white p-6 shadow-xl relative z-50">
-        <div className="max-w-4xl mx-auto flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <Mountain className="w-10 h-10" />
+      {/* Mountain background */}
+      <svg style={{
+        position: 'absolute',
+        bottom: 0,
+        width: '100%',
+        height: '384px',
+        pointerEvents: 'none'
+      }} viewBox="0 0 1200 400" preserveAspectRatio="none">
+        <path d="M0,400 L0,200 Q150,150 300,180 T600,160 T900,190 T1200,170 L1200,400 Z" fill="#475569" opacity="0.4"/>
+        <path d="M0,400 L0,220 Q200,180 400,210 T800,200 T1200,220 L1200,400 Z" fill="#334155" opacity="0.5"/>
+        <path d="M0,400 L300,400 L600,100 L900,400 L1200,400 Z" fill="#1e293b"/>
+      </svg>
+      
+      {/* Header */}
+      <div style={{
+        background: 'linear-gradient(to right, #475569, #334155)',
+        color: 'white',
+        padding: '24px',
+        boxShadow: '0 4px 6px rgba(0,0,0,0.1)',
+        position: 'relative',
+        zIndex: 50
+      }}>
+        <div style={{
+          maxWidth: '1024px',
+          margin: '0 auto',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between'
+        }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+            <span style={{ fontSize: '40px' }}>⛷️</span>
             <div>
-              <h1 className="text-3xl font-black">Smøreguide</h1>
-              <p className="text-slate-200 text-sm">Din skismøringsassistent</p>
+              <h1 style={{ fontSize: '28px', fontWeight: 'bold', margin: 0, letterSpacing: '1px' }}>DAGENS SMØRETIPS</h1>
+              <p style={{ fontSize: '14px', color: '#cbd5e1', margin: 0 }}>Din smøreassistent</p>
             </div>
           </div>
           
+          {/* Hamburger menu */}
           <button
             onClick={() => setShowAboutMenu(!showAboutMenu)}
-            className="p-2 hover:bg-white/20 rounded-lg transition"
-            aria-label="Meny"
+            style={{
+              padding: '8px',
+              background: 'rgba(255,255,255,0.2)',
+              border: 'none',
+              borderRadius: '8px',
+              cursor: 'pointer',
+              transition: 'all 0.2s'
+            }}
           >
-            <div className="w-6 h-0.5 bg-white mb-1.5"></div>
-            <div className="w-6 h-0.5 bg-white mb-1.5"></div>
-            <div className="w-6 h-0.5 bg-white"></div>
+            <div style={{ width: '24px', height: '2px', background: 'white', marginBottom: '6px' }}></div>
+            <div style={{ width: '24px', height: '2px', background: 'white', marginBottom: '6px' }}></div>
+            <div style={{ width: '24px', height: '2px', background: 'white' }}></div>
           </button>
         </div>
         
-        {showAboutMenu && <AboutMenuContent />}
+        {/* About Menu */}
+        {showAboutMenu && (
+          <>
+            <div 
+              onClick={() => setShowAboutMenu(false)}
+              style={{
+                position: 'fixed',
+                inset: 0,
+                background: 'rgba(0,0,0,0.2)',
+                zIndex: 90
+              }}
+            />
+            <div style={{
+              position: 'fixed',
+              right: '16px',
+              top: '80px',
+              background: 'white',
+              borderRadius: '8px',
+              boxShadow: '0 20px 25px rgba(0,0,0,0.1)',
+              border: '2px solid #e2e8f0',
+              width: '384px',
+              zIndex: 100,
+              maxHeight: '80vh',
+              overflow: 'hidden',
+              display: 'flex',
+              flexDirection: 'column'
+            }}>
+              <div style={{ padding: '24px', flexShrink: 0 }}>
+                <button
+                  onClick={() => setShowAboutMenu(false)}
+                  style={{
+                    position: 'absolute',
+                    top: '12px',
+                    right: '12px',
+                    background: 'none',
+                    border: 'none',
+                    color: '#9ca3af',
+                    fontSize: '20px',
+                    cursor: 'pointer'
+                  }}
+                >
+                  ×
+                </button>
+                
+                <h2 style={{ fontSize: '20px', fontWeight: 'bold', color: '#1f2937', marginBottom: '16px' }}>Om guiden</h2>
+                
+                <div style={{ display: 'flex', gap: '4px', marginBottom: '16px', borderBottom: '1px solid #e5e7eb' }}>
+                  {['om', 'kilder', 'personvern', 'kontakt'].map(tab => (
+                    <button
+                      key={tab}
+                      onClick={() => setAboutMenuTab(tab)}
+                      style={{
+                        padding: '8px 12px',
+                        fontSize: '14px',
+                        fontWeight: '600',
+                        background: 'none',
+                        border: 'none',
+                        borderBottom: aboutMenuTab === tab ? '2px solid #2563eb' : 'none',
+                        color: aboutMenuTab === tab ? '#2563eb' : '#6b7280',
+                        cursor: 'pointer',
+                        transition: 'all 0.2s'
+                      }}
+                    >
+                      {tab === 'om' ? 'Om appen' : tab === 'kilder' ? 'Kilder' : tab === 'personvern' ? 'Personvern' : 'Kontakt'}
+                    </button>
+                  ))}
+                </div>
+              </div>
+              
+              <div style={{ padding: '0 24px 24px', overflowY: 'auto', flex: 1 }}>
+                {aboutMenuTab === 'om' && (
+                  <div style={{ color: '#4b5563', fontSize: '14px', lineHeight: '1.6' }}>
+                    <p><strong style={{ color: '#1f2937' }}>Dagens Smøretips</strong> gir deg profesjonelle anbefalinger for festevoks basert på temperatur og værforhold.</p>
+                    <p>Appen henter sanntidsdata fra Meteorologisk institutt og gir deg Swix sine anbefalinger.</p>
+                    <div style={{ paddingTop: '12px', borderTop: '1px solid #e5e7eb', marginTop: '12px' }}>
+                      <p style={{ fontSize: '12px', color: '#6b7280', fontStyle: 'italic' }}>
+                        <strong>Ansvarsfraskrivelse:</strong> Alle råd og anbefalinger er veiledende. Sjekk alltid lokale forhold før du drar ut.
+                      </p>
+                    </div>
+                    <div style={{ paddingTop: '12px', borderTop: '1px solid #e5e7eb', marginTop: '12px' }}>
+                      <p style={{ fontSize: '12px', color: '#6b7280' }}>
+                        <strong>Versjon:</strong> 1.0<br/>
+                        <strong>Sist oppdatert:</strong> Januar 2026
+                      </p>
+                    </div>
+                  </div>
+                )}
+                
+                {aboutMenuTab === 'kilder' && (
+                  <div style={{ color: '#4b5563', fontSize: '14px', lineHeight: '1.6' }}>
+                    <div style={{ marginBottom: '16px' }}>
+                      <h3 style={{ fontWeight: 'bold', color: '#1f2937', marginBottom: '8px', fontSize: '14px' }}>Værdata</h3>
+                      <p>Værdata hentes i sanntid fra <strong>Meteorologisk institutt (met.no)</strong> via deres API.</p>
+                    </div>
+                    <div style={{ paddingTop: '12px', borderTop: '1px solid #e5e7eb', marginBottom: '16px' }}>
+                      <h3 style={{ fontWeight: 'bold', color: '#1f2937', marginBottom: '8px', fontSize: '14px' }}>Smøringsanbefalinger</h3>
+                      <p>Anbefalingene er basert på <strong>Swix sine retningslinjer</strong> for skismøring.</p>
+                    </div>
+                    <div style={{ paddingTop: '12px', borderTop: '1px solid #e5e7eb' }}>
+                      <h3 style={{ fontWeight: 'bold', color: '#1f2937', marginBottom: '8px', fontSize: '14px' }}>Løypeinformasjon</h3>
+                      <p style={{ marginBottom: '8px' }}>Løypebeskrivelser hentes fra:</p>
+                      <ul style={{ marginLeft: '16px', lineHeight: '1.8' }}>
+                        <li><strong>UT.no</strong> - Den norske turistforeningens turportal</li>
+                        <li><strong>Skisporet.no</strong> - Sanntidsinfo om preparerte løyper</li>
+                        <li><strong>Lillehammer.com</strong> - Visit Lillehammer sine turforslag</li>
+                      </ul>
+                    </div>
+                  </div>
+                )}
+                
+                {aboutMenuTab === 'personvern' && (
+                  <div style={{ color: '#4b5563', fontSize: '14px', lineHeight: '1.6' }}>
+                    <div style={{ marginBottom: '16px' }}>
+                      <h3 style={{ fontWeight: 'bold', color: '#1f2937', marginBottom: '8px', fontSize: '14px' }}>Datainnsamling</h3>
+                      <p>Dagens Smøretips samler <strong>ikke inn personopplysninger</strong>.</p>
+                    </div>
+                    <div style={{ paddingTop: '12px', borderTop: '1px solid #e5e7eb', marginBottom: '16px' }}>
+                      <h3 style={{ fontWeight: 'bold', color: '#1f2937', marginBottom: '8px', fontSize: '14px' }}>Lokasjonsdata</h3>
+                      <p>Stedsinformasjonen du velger brukes kun til å hente værdata. Ingen lokasjonsdata lagres eller deles.</p>
+                    </div>
+                    <div style={{ paddingTop: '12px', borderTop: '1px solid #e5e7eb', marginBottom: '16px' }}>
+                      <h3 style={{ fontWeight: 'bold', color: '#1f2937', marginBottom: '8px', fontSize: '14px' }}>GDPR</h3>
+                      <p style={{ fontSize: '12px', color: '#6b7280' }}>Appen følger EUs personvernforordning (GDPR) og norsk personvernlovgivning.</p>
+                    </div>
+                  </div>
+                )}
+                
+                {aboutMenuTab === 'kontakt' && (
+                  <div style={{ color: '#4b5563', fontSize: '14px', lineHeight: '1.6' }}>
+                    <p>Har du spørsmål eller forslag til forbedringer?</p>
+                    <div style={{ paddingTop: '12px', borderTop: '1px solid #e5e7eb', marginTop: '12px' }}>
+                      <h3 style={{ fontWeight: 'bold', color: '#1f2937', marginBottom: '12px', fontSize: '14px' }}>Kontaktinformasjon</h3>
+                      <div style={{ lineHeight: '2' }}>
+                        <p style={{ fontWeight: '600' }}>Halvor Ringen</p>
+                        <p style={{ color: '#2563eb' }}>
+                          <a href="tel:46899799" style={{ color: '#2563eb', textDecoration: 'none' }}>📞 468 99 799</a>
+                        </p>
+                        <p style={{ color: '#2563eb' }}>
+                          <a href="mailto:halvor.ringen@hotmail.com" style={{ color: '#2563eb', textDecoration: 'none', wordBreak: 'break-all' }}>
+                            ✉️ halvor.ringen@hotmail.com
+                          </a>
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                )}
+              </div>
+            </div>
+          </>
+        )}
       </div>
 
-      <div className="max-w-4xl mx-auto px-4 py-6 pb-24 space-y-4 relative z-10">
+      {/* Content */}
+      <div style={{
+        maxWidth: '1024px',
+        margin: '0 auto',
+        padding: '24px',
+        paddingBottom: '96px',
+        position: 'relative',
+        zIndex: 10
+      }}>
         {loading ? (
-          <div className="bg-white rounded-2xl p-8 border-2 border-slate-200">
-            <div className="flex items-center justify-center space-x-3">
-              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
-              <span className="text-lg text-gray-700">Henter værdata...</span>
-            </div>
+          <div style={{
+            background: 'white',
+            borderRadius: '16px',
+            padding: '32px',
+            border: '2px solid #e2e8f0',
+            textAlign: 'center'
+          }}>
+            <div style={{
+              display: 'inline-block',
+              width: '32px',
+              height: '32px',
+              border: '3px solid #e2e8f0',
+              borderTopColor: '#2563eb',
+              borderRadius: '50%',
+              animation: 'spin 1s linear infinite'
+            }}></div>
+            <p style={{ marginTop: '16px', fontSize: '18px', color: '#4b5563' }}>Henter værdata...</p>
           </div>
         ) : (
           <>
-            <div className="bg-white rounded-2xl p-6 border-2 border-slate-200 shadow-lg">
-              <div className="flex items-center justify-between mb-4">
-                <div className="flex items-center gap-3">
-                  <div className="bg-slate-100 p-2 rounded-lg">
-                    <MapPin className="w-5 h-5 text-slate-600" />
-                  </div>
-                  <span className="text-lg font-semibold text-gray-900">{location.name}</span>
+            {/* Location card */}
+            <div style={{
+              background: 'white',
+              borderRadius: '16px',
+              padding: '20px',
+              border: '2px solid #e2e8f0',
+              boxShadow: '0 4px 6px rgba(0,0,0,0.1)',
+              marginBottom: '16px'
+            }}>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                  <span style={{ fontSize: '24px', color: '#64748b' }}>📍</span>
+                  <span style={{ fontSize: '20px', fontWeight: '600', color: '#1f2937' }}>{location.name}</span>
+                  <span style={{ fontSize: '24px', color: '#e5e7eb', cursor: 'pointer' }}>⭐</span>
                 </div>
                 <button
                   onClick={() => setShowAddLocation(!showAddLocation)}
-                  className="bg-blue-600 hover:bg-blue-700 text-white p-2 rounded-lg transition"
+                  style={{
+                    background: 'transparent',
+                    color: '#1f2937',
+                    padding: '8px',
+                    borderRadius: '8px',
+                    border: 'none',
+                    cursor: 'pointer',
+                    fontSize: '24px',
+                    fontWeight: 'bold'
+                  }}
                 >
-                  <Plus className="w-5 h-5" />
+                  +
                 </button>
               </div>
 
               {showAddLocation && (
-                <div className="mb-4 relative">
+                <div style={{ marginTop: '16px', position: 'relative' }}>
                   <input
                     type="text"
                     placeholder="Søk etter sted..."
                     value={customLocation}
                     onChange={handleLocationSearch}
-                    className="w-full p-3 border-2 border-slate-300 rounded-lg text-gray-900 font-medium"
+                    style={{
+                      width: '100%',
+                      padding: '12px',
+                      border: '2px solid #cbd5e1',
+                      borderRadius: '8px',
+                      fontSize: '16px',
+                      color: '#1f2937',
+                      fontWeight: '500'
+                    }}
                   />
                   {filteredLocations.length > 0 && (
-                    <div className="absolute w-full mt-2 bg-white border-2 border-slate-200 rounded-lg shadow-xl z-10 max-h-60 overflow-y-auto">
+                    <div style={{
+                      position: 'absolute',
+                      width: '100%',
+                      marginTop: '8px',
+                      background: 'white',
+                      border: '2px solid #e2e8f0',
+                      borderRadius: '8px',
+                      boxShadow: '0 10px 15px rgba(0,0,0,0.1)',
+                      zIndex: 10,
+                      maxHeight: '240px',
+                      overflowY: 'auto'
+                    }}>
                       {filteredLocations.map((loc) => (
                         <button
                           key={loc.name}
                           onClick={() => selectLocation(loc)}
-                          className="w-full p-3 text-left hover:bg-slate-100 border-b border-slate-200 last:border-0 font-medium text-gray-900"
+                          style={{
+                            width: '100%',
+                            padding: '12px',
+                            textAlign: 'left',
+                            background: 'white',
+                            border: 'none',
+                            borderBottom: '1px solid #e2e8f0',
+                            cursor: 'pointer',
+                            fontWeight: '500',
+                            color: '#1f2937',
+                            transition: 'background 0.2s'
+                          }}
+                          onMouseOver={(e) => e.target.style.background = '#f1f5f9'}
+                          onMouseOut={(e) => e.target.style.background = 'white'}
                         >
                           {loc.name}
                         </button>
@@ -948,56 +1249,122 @@ export default function SkiWaxApp() {
                   )}
                 </div>
               )}
+            </div>
 
-              <div className="grid grid-cols-2 gap-4 mb-6">
-                <div className="bg-gradient-to-br from-blue-50 to-blue-100 p-4 rounded-xl border-2 border-blue-200">
-                  <div className="flex items-center gap-2 mb-2">
-                    <Thermometer className="w-5 h-5 text-blue-600" />
-                    <span className="text-sm font-bold text-blue-900">Temperatur</span>
+            {/* Weather card */}
+            <div style={{
+              background: 'white',
+              borderRadius: '16px',
+              padding: '24px',
+              border: '2px solid #e2e8f0',
+              boxShadow: '0 4px 6px rgba(0,0,0,0.1)',
+              marginBottom: '16px'
+            }}>
+              <h2 style={{ fontSize: '18px', fontWeight: 'bold', marginBottom: '16px', color: '#1f2937', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                ☁️ Værforhold
+              </h2>
+              
+              <div style={{
+                display: 'grid',
+                gridTemplateColumns: 'repeat(3, 1fr)',
+                gap: '12px'
+              }}>
+                <div style={{
+                  background: '#ffe4e6',
+                  padding: '24px 16px',
+                  borderRadius: '12px',
+                  textAlign: 'center'
+                }}>
+                  <div style={{ fontSize: '32px', marginBottom: '8px' }}>🌡️</div>
+                  <div style={{ fontSize: '28px', fontWeight: 'bold', color: '#1f2937', marginBottom: '4px' }}>
+                    {weather.temperature}°C
                   </div>
-                  <div className="text-3xl font-black text-blue-900">{weather.temperature}°C</div>
-                  <div className="text-xs text-blue-700 mt-1">Nedbør: {weather.precipitation} mm</div>
+                  <div style={{ fontSize: '13px', color: '#6b7280', fontWeight: '500' }}>Temperatur</div>
                 </div>
 
-                <div className="bg-gradient-to-br from-cyan-50 to-cyan-100 p-4 rounded-xl border-2 border-cyan-200">
-                  <div className="flex items-center gap-2 mb-2">
-                    <Wind className="w-5 h-5 text-cyan-600" />
-                    <span className="text-sm font-bold text-cyan-900">Vind</span>
+                <div style={{
+                  background: '#dbeafe',
+                  padding: '24px 16px',
+                  borderRadius: '12px',
+                  textAlign: 'center'
+                }}>
+                  <div style={{ fontSize: '32px', marginBottom: '8px' }}>☁️</div>
+                  <div style={{ fontSize: '28px', fontWeight: 'bold', color: '#1f2937', marginBottom: '4px' }}>
+                    {weather.precipitation} mm
                   </div>
-                  <div className="text-3xl font-black text-cyan-900">{weather.windSpeed} m/s</div>
-                  <div className="text-xs text-cyan-700 mt-1">Fuktighet: {weather.humidity}%</div>
+                  <div style={{ fontSize: '13px', color: '#6b7280', fontWeight: '500' }}>Nedbør</div>
+                </div>
+
+                <div style={{
+                  background: '#ccfbf1',
+                  padding: '24px 16px',
+                  borderRadius: '12px',
+                  textAlign: 'center'
+                }}>
+                  <div style={{ fontSize: '32px', marginBottom: '8px' }}>💨</div>
+                  <div style={{ fontSize: '28px', fontWeight: 'bold', color: '#1f2937', marginBottom: '4px' }}>
+                    {weather.windSpeed} m/s
+                  </div>
+                  <div style={{ fontSize: '13px', color: '#6b7280', fontWeight: '500' }}>Vind</div>
                 </div>
               </div>
             </div>
 
+            {/* Wax recommendation card */}
             {recommendation && (
-              <div className="bg-white rounded-2xl p-6 border-2 border-slate-200 shadow-lg">
-                <h2 className="text-2xl font-black mb-4 text-gray-900">Smøringsanbefaling</h2>
-                
-                <div className={`${recommendation.color} text-white p-4 rounded-xl mb-4`}>
-                  <div className="font-black text-lg mb-2">{recommendation.condition}</div>
-                  <div className="text-sm opacity-90">{recommendation.tip}</div>
-                </div>
-
-                <div className="space-y-2">
-                  <h3 className="font-bold text-gray-900 mb-2">Anbefalte produkter (Swix):</h3>
-                  {recommendation.products.map((product, index) => (
-                    <div
-                      key={index}
-                      className="bg-slate-50 p-3 rounded-lg border border-slate-200 font-semibold text-gray-900"
-                    >
-                      {product}
+              <div style={{
+                background: recommendation.color,
+                borderRadius: '16px',
+                padding: '24px',
+                border: '3px solid white',
+                boxShadow: '0 4px 6px rgba(0,0,0,0.1)',
+                color: 'white'
+              }}>
+                <div style={{ display: 'flex', gap: '20px', alignItems: 'flex-start' }}>
+                  <div style={{
+                    background: 'white',
+                    borderRadius: '8px',
+                    padding: '16px',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'center',
+                    minWidth: '100px'
+                  }}>
+                    <div style={{ fontSize: '40px', fontWeight: 'bold', color: '#1f2937', lineHeight: 1 }}>
+                      {recommendation.letter}
                     </div>
-                  ))}
-                </div>
-
-                <div className="mt-4 p-4 bg-blue-50 rounded-lg border border-blue-200">
-                  <div className="flex items-start gap-2">
-                    <Info className="w-5 h-5 text-blue-600 flex-shrink-0 mt-0.5" />
-                    <p className="text-sm text-blue-900">
-                      <strong>Tips:</strong> Test alltid smøringen på en liten del av skiene først. 
-                      Værforholdene kan variere lokalt.
-                    </p>
+                    <div style={{ 
+                      marginTop: '4px',
+                      padding: '4px 12px',
+                      background: '#ef4444',
+                      color: 'white',
+                      fontSize: '11px',
+                      fontWeight: 'bold',
+                      borderRadius: '4px'
+                    }}>SWIX</div>
+                  </div>
+                  
+                  <div style={{ flex: 1 }}>
+                    <div style={{ fontSize: '13px', fontWeight: 'bold', marginBottom: '4px', opacity: 0.9 }}>
+                      {recommendation.category}
+                    </div>
+                    <h2 style={{ fontSize: '32px', fontWeight: 'bold', margin: '0 0 8px 0' }}>
+                      {recommendation.name}
+                    </h2>
+                    <div style={{ fontSize: '15px', marginBottom: '16px', opacity: 0.95 }}>
+                      {recommendation.condition}
+                    </div>
+                    
+                    <div style={{
+                      background: 'rgba(0,0,0,0.15)',
+                      borderRadius: '8px',
+                      padding: '16px'
+                    }}>
+                      <div style={{ fontWeight: 'bold', marginBottom: '8px', fontSize: '14px' }}>Smøretips:</div>
+                      <div style={{ fontSize: '14px', lineHeight: '1.6' }}>
+                        {recommendation.tip}
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -1006,18 +1373,55 @@ export default function SkiWaxApp() {
         )}
       </div>
 
-      <div className="fixed bottom-0 left-0 right-0 bg-gradient-to-r from-slate-600 to-slate-700 border-t-2 border-slate-500 shadow-2xl z-20">
-        <div className="max-w-4xl mx-auto px-4 py-3 flex gap-2">
+      {/* Footer */}
+      <div style={{
+        position: 'fixed',
+        bottom: 0,
+        left: 0,
+        right: 0,
+        background: 'linear-gradient(to right, #475569, #334155)',
+        borderTop: '2px solid #64748b',
+        boxShadow: '0 -4px 6px rgba(0,0,0,0.1)',
+        zIndex: 20
+      }}>
+        <div style={{
+          maxWidth: '1024px',
+          margin: '0 auto',
+          padding: '12px 16px',
+          display: 'flex',
+          gap: '8px'
+        }}>
           <button
-            className="flex-1 bg-white hover:bg-slate-50 py-4 rounded-xl transition font-bold text-lg text-slate-700 flex items-center justify-center gap-2"
+            style={{
+              flex: 1,
+              background: 'white',
+              color: '#334155',
+              padding: '16px',
+              borderRadius: '12px',
+              border: 'none',
+              fontWeight: 'bold',
+              fontSize: '16px',
+              cursor: 'pointer'
+            }}
           >
-            <span>🎿</span><span>Smøring</span>
+            🎿 Smøring
           </button>
           <button
             onClick={() => setCurrentPage('trails')}
-            className="flex-1 bg-white/20 hover:bg-white/30 py-4 rounded-xl transition font-bold text-lg text-white flex items-center justify-center gap-2"
+            style={{
+              flex: 1,
+              background: 'rgba(255,255,255,0.2)',
+              color: 'white',
+              padding: '16px',
+              borderRadius: '12px',
+              border: 'none',
+              fontWeight: 'bold',
+              fontSize: '16px',
+              cursor: 'pointer',
+              transition: 'all 0.2s'
+            }}
           >
-            <span>🏔️</span><span>Løyper</span>
+            🏔️ Løyper
           </button>
         </div>
       </div>
