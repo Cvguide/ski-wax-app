@@ -1,6 +1,14 @@
 import React, { useState, useEffect } from 'react';
 
-
+export default function App() {
+  const [location, setLocation] = useState({ lat: 59.91, lon: 10.75, name: 'Oslo' });
+  const [weather, setWeather] = useState({
+    temperature: 2,
+    precipitation: 0,
+    windSpeed: 3,
+    humidity: 70
+  });
+  const [loading, setLoading] = useState(false);
   const [customLocation, setCustomLocation] = useState('');
   const [showAddLocation, setShowAddLocation] = useState(false);
   const [currentPage, setCurrentPage] = useState('home');
@@ -27,6 +35,11 @@ import React, { useState, useEffect } from 'react';
   ];
 
   const [filteredLocations, setFilteredLocations] = useState([]);
+
+  useEffect(() => {
+    fetchWeather(location.lat, location.lon);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
 
 
