@@ -36,17 +36,7 @@ export default function App() {
 
   const [filteredLocations, setFilteredLocations] = useState([]);
 
-  useEffect(() => {
-    if (typeof window !== 'undefined') {
-      fetchWeather(location.lat, location.lon);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
 
-
-    try {
-      setLoading(true);
-      const response = await fetch(
         `https://api.met.no/weatherapi/locationforecast/2.0/compact?lat=${lat}&lon=${lon}`,
         {
           method: 'GET',
