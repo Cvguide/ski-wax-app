@@ -1,6 +1,4 @@
-import React, { useState, useEffect } from 'react';
 
-export default function App() {
   const [location, setLocation] = useState({ lat: 59.91, lon: 10.75, name: 'Oslo' });
   const [weather, setWeather] = useState({
     temperature: 2,
@@ -9,6 +7,7 @@ export default function App() {
     humidity: 70
   });
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(false);
   const [customLocation, setCustomLocation] = useState('');
   const [showAddLocation, setShowAddLocation] = useState(false);
   const [currentPage, setCurrentPage] = useState('home');
@@ -36,14 +35,7 @@ export default function App() {
 
   const [filteredLocations, setFilteredLocations] = useState([]);
 
-  useEffect(() => {
-    fetchWeather(location.lat, location.lon);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
 
-
-
-  useEffect(() => {
     if (currentPage === 'trails' && location) {
       fetchTrails();
     }
@@ -355,6 +347,46 @@ export default function App() {
     return trailsMap[locationName] || [];
   };
 
+  const fetchWeather = async (lat, lon) => {
+    try {
+      setLoading(true);
+      
+      const response = await fetch(
+        `https://api.met.no/weatherapi/locationforecast/2.0/compact?lat=${lat}&lon=${lon}`,
+        {
+          headers: {
+            'User-Agent': 'DagensSmøretips/1.0'
+          }
+        }
+      );
+      
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      
+      const data = await response.json();
+      
+      if (!data || !data.properties || !data.properties.timeseries || data.properties.timeseries.length === 0) {
+        throw new Error('Invalid weather data');
+      }
+      
+      const current = data.properties.timeseries[0];
+      const weatherData = {
+        temperature: Math.round(current.data.instant.details.air_temperature),
+        precipitation: current.data.next_1_hours?.details?.precipitation_amount || 0,
+        windSpeed: Math.round(current.data.instant.details.wind_speed),
+        humidity: Math.round(current.data.instant.details.relative_humidity)
+      };
+      
+      setWeather(weatherData);
+      setLoading(false);
+    } catch (error) {
+      console.error('Weather fetch error:', error);
+      setLoading(false);
+      // Keep default dummy data
+    }
+  };
+
   const fetchTrails = () => {
     setLoadingTrails(true);
     setTimeout(() => {
@@ -450,16 +482,7 @@ export default function App() {
 
   const recommendation = getWaxRecommendation();
 
-  // TRAILS PAGE
-  if (currentPage === 'trails') {
-    return (
-      <div style={{
-        minHeight: '100vh',
-        background: 'linear-gradient(to bottom, #94a3b8, #64748b, #475569)',
-        position: 'relative',
-        overflow: 'hidden'
-      }}>
-        {/* Mountain background */}
+
         <svg style={{
           position: 'absolute',
           bottom: 0,
@@ -894,19 +917,7 @@ export default function App() {
     );
   }
 
-  // HOME PAGE
-  return (
-    <div style={{
-      minHeight: '100vh',
-      background: 'linear-gradient(to bottom, #94a3b8, #64748b, #475569)',
-      position: 'relative',
-      overflow: 'hidden'
-    }}>
-      <style>{`
-        @keyframes spin {
-          to { transform: rotate(360deg); }
-        }
-      `}</style>
+
       
       {/* Mountain background */}
       <svg style={{
@@ -1382,5 +1393,15 @@ export default function App() {
         </div>
       </div>
     </div>
+  );
+}
+
+}
+
+export default function App() {
+  return (
+    <ErrorBoundary>
+      <AppContent />
+    </ErrorBoundary>
   );
 }
