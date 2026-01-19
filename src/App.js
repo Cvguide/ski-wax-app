@@ -910,12 +910,7 @@ export default function App() {
           </div>
         </div>
       </div>
-    );
-  }
 
-
-      
-      {/* Mountain background */}
       <svg style={{
         position: 'absolute',
         bottom: 0,
