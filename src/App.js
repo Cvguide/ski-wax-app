@@ -892,26 +892,7 @@ export default function App() {
             >
               🎿 Smøring
             </button>
-            <button
-              style={{
-                flex: 1,
-                background: 'white',
-                color: '#334155',
-                padding: '16px',
-                borderRadius: '12px',
-                border: 'none',
-                fontWeight: 'bold',
-                fontSize: '16px',
-                cursor: 'pointer'
-              }}
-            >
-              🏔️ Løyper
-            </button>
-          </div>
-        </div>
-      </div>
 
-      <svg style={{
         position: 'absolute',
         bottom: 0,
         width: '100%',
