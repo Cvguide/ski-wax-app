@@ -43,14 +43,7 @@ export default function App() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  useEffect(() => {
-    if (currentPage === 'trails' && location) {
-      fetchTrails();
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [currentPage, location]);
 
-  const fetchWeather = async (lat, lon) => {
     try {
       setLoading(true);
       const response = await fetch(
