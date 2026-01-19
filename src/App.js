@@ -1,3 +1,6 @@
+import React, { useState, useEffect } from 'react';
+
+export default function App() {
 
   const [location, setLocation] = useState({ lat: 59.91, lon: 10.75, name: 'Oslo' });
   const [weather, setWeather] = useState({
@@ -33,14 +36,7 @@
     { name: 'Gålå', lat: 61.55, lon: 9.40 }
   ];
 
-  const [filteredLocations, setFilteredLocations] = useState([]);
 
-
-    if (currentPage === 'trails' && location) {
-      fetchTrails();
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [currentPage, location]);
 
   const getTrailColor = (difficulty) => {
     switch(difficulty?.toLowerCase()) {
